@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silly Billys memes</title>
+</head>
+<body>
+    <div id="top">
+        <h2>SILLY BILLY MEMES</h2>
+    </div>
+    <div id="main">
+        <ul id="memes"></ul>
+    </div>
+    <div id="bottom">
+        <button id="upload">Upload a meme</button>
+    </div>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Chivo+Mono:wght@300&family=Climate+Crisis&family=Inconsolata:wght@300&family=JetBrains+Mono:wght@200;300;400&family=Merriweather:wght@300&family=Montserrat:wght@800&family=Nabla&family=Noto+Sans+JP:wght@100&family=Open+Sans:wght@500;800&family=Orbitron&family=Raleway:ital,wght@0,200;1,400&family=Seymour+One&family=Sigmar+One&family=Source+Code+Pro&family=Unbounded&display=swap');
+        * {
+            font-family: 'Anton', sans-serif;
+            margin: 0; 
+            padding: 0;
+        }
+        body {
+            background-image: linear-gradient(to right, rgb(31, 8, 115), #fff);
+            color: #fff;
+
+        }
+        
+        #top {
+            background-color: #000;
+            color: #fff;
+            
+            text-align: center;
+        }
+        #main {
+            
+            color: rgb(255, 255, 255);
+           margin-top:  20vh;
+            text-align: center;
+        }
+        #bottom {
+            background-color: #000;
+            color: #fff;
+            
+            text-align: center;
+        }
+        #upload {
+            background-color: #fff;
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #upload:hover {
+            background-color: #000;
+            color: #fff;
+        }
+        #memes {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul {
+            height: 50vh;
+            overflow-y: scroll;
+            background-color: transparent;
+        }
+        li {
+            border: 2px solid rgb(0, 0, 0);
+        }
+        
+        
+       
+
+    </style>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-analytics.js";
+        import { getDatabase, ref, set, get , onValue  } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+        // storage
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
+        
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyCE7XzC9eRt2MQyAM1mEcyUa5-4F81F5q0",
+          authDomain: "silly-billy-fa57f.firebaseapp.com",
+          projectId: "silly-billy-fa57f",
+          storageBucket: "silly-billy-fa57f.appspot.com",
+          messagingSenderId: "944877609543",
+          appId: "1:944877609543:web:fabe88caf05c3bd30f4762",
+          measurementId: "G-YSXT21ZR1Y"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        const storage = getStorage(app);
+        const memesRef = ref(database, 'memes/');
+        const memesList = document.getElementById('memes');
+        const uploadButton = document.getElementById('upload');
+        const uploadForm = document.createElement('form');
+        uploadButton.onclick = function() {
+           window.location.href = './upload.html';
+        }
+        // get memes from database
+        onValue(memesRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            for (const meme in data) {
+                const memeData = data[meme];
+                const memeElement = document.createElement('li');
+                memeElement.innerHTML = `
+                    <h3>${memeData.username}</h3>
+                    <h3>${memeData.title}</h3>
+                    <img src="${memeData.url}" alt="${memeData.title}" width="200px" height="200px">
+                `;
+                memeElement.onclick = function() {
+                    window.location.href = `./meme.html?id=${meme}`;
+                }
+                memesList.appendChild(memeElement);
+            }
+        });
+        if(window.localStorage.getItem("username") == null) {
+           var username = prompt("Please enter your name");
+           window.localStorage.setItem("username", username);
+        }
+
+
+      </script>
+
+</body>
+</html>
